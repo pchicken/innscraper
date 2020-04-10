@@ -52,20 +52,21 @@ func main() {
 		chapter := htmlutil.GetFirstHtmlNode(pageNode, "article", "", "")
 		contentNode := htmlutil.GetFirstHtmlNode(chapter, "div", "class", "entry-content")
 
-		contentNode.RemoveChild(contentNode.LastChild) //remove pesky prev/next buttons
-		chapter.RemoveChild(chapter.LastChild)         //remove tags (why are they even on the site lol)
+		htmlutil.RemoveAllHtmlNodes(contentNode, "a", "", "")                 //remove pesky prev/next buttons
+		htmlutil.RemoveAllHtmlNodes(chapter, "footer", "class", "entry-meta") //remove tags (why are they even on the site lol)
+		htmlutil.RemoveAllHtmlNodes(contentNode, "hr", "", "")                //that break line
 
 		chapterText, _ := htmlutil.HtmlNodeToString(chapter)
 		title := htmlutil.GetFirstHtmlNode(chapter, "h1", "", "").FirstChild.Data
 
 		book.AddSection(chapterText, title, name(chapters[i].Attr[0].Val), "")
-		fmt.Print("\r" + strconv.Itoa(i+1) + "/" + strconv.Itoa(len(chapters)) + ": added " + title + "                                ")
+		fmt.Print("\r" + strconv.Itoa(i+1) + "/" + strconv.Itoa(len(chapters)) + ": wrote " + title + "                                ")
 	}
 	fmt.Print("\r413/413: finished                 ")
 	os.Chdir("..")
 	book.Write("thewanderinginn.epub")
 	color.Set(color.FgHiGreen)
-	fmt.Println("\nepub written to ./wandering_inn/thewanderinginn.epub")
+	fmt.Println("\nepub at ./wandering_inn/thewanderinginn.epub")
 }
 
 func save(url string, done chan bool) {
